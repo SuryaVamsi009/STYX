@@ -329,6 +329,7 @@ def test_output_deterministic_no_date_no_sha(tmp_path: Path):
     # The test uses a fixed recorded_at, so this is fine
     # Check no commit sha (should not appear)
     import re
+
     sha_pattern = re.compile(r"[a-f0-9]{40}")
     assert not sha_pattern.search(content1), "Should not contain commit SHA"
 
@@ -445,6 +446,7 @@ def test_mermaid_contains_all_nodes_and_classes(tmp_path: Path):
 
     # Extract mermaid block
     import re
+
     mermaid_match = re.search(r"```mermaid\n(.*?)\n```", content, re.DOTALL)
     assert mermaid_match, "Mermaid block not found"
     mermaid = mermaid_match.group(1)
@@ -525,4 +527,5 @@ def test_real_repo_gate_0_blocked():
 
 if __name__ == "__main__":
     import pytest
+
     pytest.main([__file__, "-v"])

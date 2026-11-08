@@ -28,10 +28,10 @@ NOT_RUN = "NOT_RUN"
 DEFERRED = "DEFERRED"
 
 CLASS_FILLS = {
-    "pass": "#2e7d32",      # green
-    "fail": "#c62828",      # red
-    "blocked": "#f57f17",   # amber
-    "not_run": "#757575",   # grey
+    "pass": "#2e7d32",  # green
+    "fail": "#c62828",  # red
+    "blocked": "#f57f17",  # amber
+    "not_run": "#757575",  # grey
     "deferred": "#bdbdbd",  # light grey
 }
 
@@ -143,7 +143,7 @@ def truncate_blocker(blocker: str, max_len: int = 120) -> str:
     """Truncate blocker to max_len with ellipsis."""
     if len(blocker) <= max_len:
         return blocker
-    return blocker[:max_len - 3] + "..."
+    return blocker[: max_len - 3] + "..."
 
 
 def build_json_summary(plan: dict[str, Any]) -> dict[str, Any]:
@@ -157,25 +157,29 @@ def build_json_summary(plan: dict[str, Any]) -> dict[str, Any]:
     # Process gates
     for gate in gates:
         state, recorded_at, blockers = get_gate_state(gate)
-        steps.append({
-            "id": gate["id"],
-            "name": gate["name"],
-            "state": state,
-            "recorded_at": recorded_at,
-            "blockers": blockers[:3],  # First 3 blockers
-        })
+        steps.append(
+            {
+                "id": gate["id"],
+                "name": gate["name"],
+                "state": state,
+                "recorded_at": recorded_at,
+                "blockers": blockers[:3],  # First 3 blockers
+            }
+        )
         counts[state] = counts.get(state, 0) + 1
 
     # Process research
     for r in research:
         state, recorded_at, blockers = get_research_state(r)
-        steps.append({
-            "id": r["id"],
-            "name": r["name"],
-            "state": state,
-            "recorded_at": recorded_at,
-            "blockers": blockers[:3],
-        })
+        steps.append(
+            {
+                "id": r["id"],
+                "name": r["name"],
+                "state": state,
+                "recorded_at": recorded_at,
+                "blockers": blockers[:3],
+            }
+        )
         counts[state] = counts.get(state, 0) + 1
 
     # Find next step (first not PASS and not DEFERRED)
@@ -209,7 +213,7 @@ def generate_mermaid(plan: dict[str, Any], summary: dict[str, Any]) -> str:
         label = f'{gate["id"]}["{gate["id"]} {gate["name"]}<br/>{step["state"]}"]'
         lines.append(f"        {label}")
         if i < len(gates) - 1:
-            lines.append(f"        {gates[i]['id']} --> {gates[i+1]['id']}")
+            lines.append(f"        {gates[i]['id']} --> {gates[i + 1]['id']}")
     lines.append("    end")
 
     # Research loop subgraph
@@ -220,7 +224,7 @@ def generate_mermaid(plan: dict[str, Any], summary: dict[str, Any]) -> str:
         label = f'{r["id"]}["{r["id"]} {r["name"]}<br/>{step["state"]}"]'
         lines.append(f"        {label}")
         if i < len(research) - 1:
-            lines.append(f"        {research[i]['id']} --> {research[i+1]['id']}")
+            lines.append(f"        {research[i]['id']} --> {research[i + 1]['id']}")
     lines.append("    end")
 
     # Dotted edge from research_starts_after to R1
@@ -321,8 +325,7 @@ def main():
         current_content = STATUS_FILE.read_text()
         if current_content != new_content:
             msg = (
-                f"ERROR: {STATUS_FILE} is stale. "
-                "Run 'python scripts/status.py --write' to update."
+                f"ERROR: {STATUS_FILE} is stale. Run 'python scripts/status.py --write' to update."
             )
             print(msg)
             return 1
