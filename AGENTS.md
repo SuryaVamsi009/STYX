@@ -17,3 +17,21 @@ Restate the task and name its gate or step. Read docs and files. Make the smalle
 
 ## When unsure
 State what is unknown and what evidence would settle it. Stop at the affected gate. Do not guess or bypass a failed check.
+
+## Skills
+- Skills live in `.github/skills/`. Use `grill-with-docs` before any new design, `to-spec` then `to-tickets` then `implement` for building, `tdd` inside every implementation, `code-review` before every PR, `pr` for PR bodies.
+- Before touching execution, data clients, indicators, the cost model or gate evidence, run `styx-guardrails`.
+- Before using any library API, run `source-driven-development`. Label anything unverified `UNVERIFIED`.
+- Quality-bar numbers (coverage and similar) can use the defaults from `constraint-driven-development`. Trading numbers (capital, sizing, loss limits, thresholds, horizon, universe, pass criteria) are never defaulted. Ask Surya.
+- Every indicator or signal needs a test that removing future bars does not change past values.
+- Use `doubt-driven-development` only when I ask, or on changes to the no-live-orders boundary.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues (uses `gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context (`GLOSSARY.md` + `docs/adr/` at repo root). See `docs/agents/domain.md`.
