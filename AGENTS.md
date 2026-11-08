@@ -24,7 +24,7 @@ State what is unknown and what evidence would settle it. Stop at the affected ga
 - Before using any library API, run `source-driven-development`. Label anything unverified `UNVERIFIED`.
 - Quality-bar numbers (coverage and similar) can use the defaults from `constraint-driven-development`. Trading numbers (capital, sizing, loss limits, thresholds, horizon, universe, pass criteria) are never defaulted. Ask Surya.
 - Every indicator or signal needs a test that removing future bars does not change past values.
-- Use `doubt-driven-development` only when I ask, or on changes to the no-live-orders boundary.
+- Use `doubt-driven-development` only when Surya asks, or on changes to the no-live-orders boundary.
 
 ## Agent skills
 
