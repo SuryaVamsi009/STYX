@@ -80,7 +80,7 @@ Work in order. Record each gate as **pass**, **fail** or **blocked** with eviden
 
 | Gate | Goal | Done when |
 | --- | --- | --- |
-| 0. Scope and safety | Choose provider, instruments, environment. Prove no live-order path exists. | Scope record names provider, instruments, environment, tool versions. A test shows that no real-broker execution client is registered and that orders land in the sandbox. |
+| 0. Scope and safety | Choose provider, instruments, environment. Prove the selected paper route has no real-order path. | Scope record names provider, instruments, environment and tool versions. A test proves no real-broker order path is registered or invoked, the selected route records the test order virtually, and the broker's own order book shows no new order. |
 | 1. Data path | Prove the chosen source gives usable, reproducible history. | A live quote and a bounded multi-instrument history are loaded. Calendar, timestamps, duplicates, gaps and adjustments are checked and reported. A dataset snapshot id and a quality report are saved. |
 | 2. Accounting | Prove simulated accounting matches hand calculation. | A synthetic trade ledger reconciles to a hand calculation within a stated tolerance. Signal-to-fill timing is tested (next bar or later, daily bars stamped at session close). The cost config has `as_of` and `source`. |
 | 3. Paper smoke test | One paper route runs a session and produces a reconcilable log. | One route chosen (A or B below), session completed, ledger reconciled, no live order sent or prepared. |
@@ -92,6 +92,8 @@ Paper routes for Gate 3. Pick one and test only that:
 
 - **Route B, OpenAlgo Analyzer Mode** (fastest): virtual capital on real broker prices. Set the sandbox capital to Surya's approved planning capital, not the 1 Cr default. Confirm Analyzer Mode is on before any order. Run the validation workflow: market order, limit order away from market, modify, cancel, square-off, reset.
 - **Route A, NautilusTrader sandbox execution on Fyers data**: register the Fyers data client and NautilusTrader's sandbox execution client only. Never register `FyersLiveExecClientFactory`. Class and config names are unverified until checked against the installed version.
+
+**Gate 0 Route B exception, approved by Surya:** The single Gate 0 paper-order exercise uses ₹2,000 of Analyzer Mode capital at 1× (no leverage) for one market Buy of one NSE `RELIANCE` cash-equity share, product MIS. This is test-only capital, not planning capital or strategy evidence; no F&O is used. Do not submit the order until Analyzer Mode isolation is verified. Record the capital and leverage in `evidence/gate_0.json`. If the documented funds requirement including applicable charges is unknown or exceeds ₹2,000, stop and request Surya's approval before raising the test amount; never increase leverage or change the quantity automatically. Before Gate 3 or any research or strategy run, reset to Surya-approved planning capital.
 
 ## 6. Research loop
 
