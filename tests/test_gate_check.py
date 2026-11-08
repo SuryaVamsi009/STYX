@@ -12,6 +12,7 @@ def test_gate_check_script_exists():
 def test_gate_check_validates_gate_0():
     """Verify gate_check.py can validate gate_0.json."""
     import subprocess
+
     result = subprocess.run(
         ["uv", "run", "python", "scripts/gate_check.py", "--gate", "0"],
         capture_output=True,
@@ -25,6 +26,7 @@ def test_gate_check_validates_gate_0():
 def test_gate_check_missing_evidence():
     """Verify gate_check.py reports error when evidence file missing."""
     import subprocess
+
     result = subprocess.run(
         ["uv", "run", "python", "scripts/gate_check.py", "--gate", "99"],
         capture_output=True,

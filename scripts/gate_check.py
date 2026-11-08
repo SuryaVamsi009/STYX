@@ -19,8 +19,14 @@ def validate_gate_0(evidence_path: Path) -> int:
 
     # Check required top-level keys
     required_keys = [
-        "gate", "status", "recorded_at", "scope", "approved_test_only_capital",
-        "checks", "blockers", "credentials_recorded"
+        "gate",
+        "status",
+        "recorded_at",
+        "scope",
+        "approved_test_only_capital",
+        "checks",
+        "blockers",
+        "credentials_recorded",
     ]
     missing = [k for k in required_keys if k not in data]
     if missing:
