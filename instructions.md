@@ -88,6 +88,8 @@ Work in order. Record each gate as **pass**, **fail** or **blocked** with eviden
 | 5. Protocol freeze | Deferred until a strategy is evaluated. | Surya approves a written protocol first (section 7). |
 | 6. Evidence review | Preserve and review. | Every gate has its evidence, versions, configs and limitations stored. |
 
+`python scripts/status.py` is the quick answer to "where are we?".
+
 Paper routes for Gate 3. Pick one and test only that:
 
 - **Route B, OpenAlgo Analyzer Mode** (fastest): virtual capital on real broker prices. Set the sandbox capital to Surya's approved planning capital, not the 1 Cr default. Confirm Analyzer Mode is on before any order. Run the validation workflow: market order, limit order away from market, modify, cancel, square-off, reset.
