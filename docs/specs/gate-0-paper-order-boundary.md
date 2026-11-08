@@ -52,4 +52,3 @@ Record the scope, versions, configuration/mode state, route audit, test-only cap
 
 - No local OpenAlgo installation or installed-version documentation is available; Analyzer Mode isolation is **UNVERIFIED**.
 - Part A and Part B have not been run.
-- `scripts/gate_check.py` is absent from this checkout, so the repository gate-check command cannot currently be run.

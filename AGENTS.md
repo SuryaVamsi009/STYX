@@ -15,6 +15,8 @@ Read `instructions.md` first. STYX is paper-only research and paper trading for 
 ## Workflow
 Restate the task and name its gate or step. Read docs and files. Make the smallest change. Run the focused tests. Record evidence under `evidence/`. Report results and remaining risks.
 
+Every PR that changes `evidence/` or `docs/plan.json` runs `python scripts/status.py --write` and commits `STATUS.md`. Never edit `STATUS.md` by hand.
+
 ## When unsure
 State what is unknown and what evidence would settle it. Stop at the affected gate. Do not guess or bypass a failed check.
 
