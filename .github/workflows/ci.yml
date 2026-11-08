@@ -6,99 +6,74 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-and-test:
     name: Lint & Test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.12"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          version: "latest"
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/uv
-          key: uv-${{ runner.os }}-${{ hashFiles('**/requirements*.txt', '**/pyproject.toml') }}
-          restore-keys: |
-            uv-${{ runner.os }}-
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          uv pip install --system pytest pytest-cov ruff mypy
+        run: uv sync --locked
 
-      - name: Run ruff (lint)
-        run: ruff check .
+      - name: Ruff lint
+        run: uv run ruff check .
 
-      - name: Run ruff (format check)
-        run: ruff format --check .
+      - name: Ruff format check
+        run: uv run ruff format --check .
 
-      - name: Run mypy (type check)
-        run: mypy --ignore-missing-imports bridge/ research/ scripts/ tests/ || true
+      - name: Mypy
+        run: uv run mypy bridge/ research/ scripts/
+        continue-on-error: true
 
-      - name: Run tests
+      - name: Tests
         if: ${{ hashFiles('tests/**/*.py') != '' }}
-        run: pytest tests/ -v --cov=bridge --cov=research --cov=scripts --cov-report=term-missing
-
-      - name: Check for secrets
-        run: |
-          if git diff --cached --name-only | xargs grep -l "api_key\|secret\|token\|password" 2>/dev/null; then
-            echo "ERROR: Potential secrets found in staged files"
-            exit 1
-          fi
+        run: uv run pytest --cov=bridge --cov=research --cov=scripts --cov-report=term-missing
 
   gate-check:
     name: Gate Evidence Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: lint-and-test
     if: github.event_name == 'pull_request'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.12"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-
-      - name: Install dependencies
-        run: uv pip install --system pytest
-
+          enable-cache: true
+      - run: uv sync --locked
       - name: Validate gate evidence files
-        if: ${{ hashFiles('scripts/gate_check.py') != '' }}
         run: |
           for gate in 0 1 2 3 4 5 6; do
             if [ -f "evidence/gate_${gate}.json" ]; then
-              echo "Checking gate ${gate}..."
-              python scripts/gate_check.py --gate ${gate} || echo "Gate ${gate} not PASS (may be expected)"
+              uv run python scripts/gate_check.py --gate "${gate}"
             fi
           done
 
   security:
-    name: Security Scan
+    name: Secret Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: github.event_name == 'pull_request'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Run secret scan
-        uses: trufflesecurity/trufflehog@main
+      - uses: trufflesecurity/trufflehog@v3
         with:
           path: ./
-          base: main
+          base: ${{ github.event.pull_request.base.sha }}
           head: HEAD
+          extra_args: --only-verified
