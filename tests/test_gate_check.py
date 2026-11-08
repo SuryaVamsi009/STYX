@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-import pytest
-
 
 def test_gate_check_script_exists():
     """Verify gate_check.py script exists."""
