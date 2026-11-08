@@ -3,3 +3,8 @@
 vendor/
 data/
 .venv-*/
+
+.DS_Store
+.coverage
+__pycache__/
+.pytest_cache/
