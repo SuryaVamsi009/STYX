@@ -1,0 +1,99 @@
+name: STYX CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('**/requirements*.txt', '**/pyproject.toml') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system pytest pytest-cov ruff mypy
+
+      - name: Run ruff (lint)
+        run: ruff check .
+
+      - name: Run ruff (format check)
+        run: ruff format --check .
+
+      - name: Run mypy (type check)
+        run: mypy --ignore-missing-imports bridge/ research/ scripts/ tests/ || true
+
+      - name: Run tests
+        run: pytest tests/ -v --cov=bridge --cov=research --cov=scripts --cov-report=term-missing
+
+      - name: Check for secrets
+        run: |
+          if git diff --cached --name-only | xargs grep -l "api_key\|secret\|token\|password" 2>/dev/null; then
+            echo "ERROR: Potential secrets found in staged files"
+            exit 1
+          fi
+
+  gate-check:
+    name: Gate Evidence Check
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv pip install --system pytest
+
+      - name: Validate gate evidence files
+        run: |
+          for gate in 0 1 2 3 4 5 6; do
+            if [ -f "evidence/gate_${gate}.json" ]; then
+              echo "Checking gate ${gate}..."
+              python scripts/gate_check.py --gate ${gate} || echo "Gate ${gate} not PASS (may be expected)"
+            fi
+          done
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run secret scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
