@@ -170,7 +170,7 @@ State what is unknown and what evidence would settle it. Stop at the affected ga
 
 | Decision | Why it matters |
 | --- | --- |
-| First data provider: Angel One or Fyers | Fyers has the Nautilus adapter (alpha). Angel One free history covers equity and NFO futures. Both are on OpenAlgo's list. |
+| First data provider: Angel One or Fyers | Gate 0 is provider-neutral; the provider is recorded when Part A runs. Fyers has the Nautilus adapter (alpha). Angel One free history covers equity and NFO futures. Both are on OpenAlgo's list. |
 | Hosting: own machine or always-on server | Sets how token expiry (Fyers about 6 AM IST daily) and restarts are handled. |
 | First paper route: A or B | Gate 3 tests one route only. |
 | Planning capital and loss limits | Not set anywhere in this project. Needed for sandbox capital and sizing. |
