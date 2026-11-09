@@ -3,13 +3,14 @@
   "status": "blocked",
   "recorded_at": "2026-11-08",
   "scope": {
-    "provider": "Angel One",
+    "provider": "NOT_SET",
     "route": "OpenAlgo Analyzer Mode",
     "environment": "Surya's own machine",
     "tool_versions": {
       "openalgo": "UNVERIFIED",
-      "angel_one_integration": "UNVERIFIED"
+      "broker_integration": "UNVERIFIED"
     },
+    "allowed_providers": ["Angel One", "Fyers"],
     "broker_account_reference": "NOT_RECORDED",
     "instrument": {
       "symbol": "RELIANCE",

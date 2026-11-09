@@ -8,7 +8,7 @@ Prove the selected Gate 0 configuration does not register or invoke a real-broke
 
 ## Approved scope
 
-- Provider: Angel One.
+- Provider: Angel One or Fyers, whichever is connected in OpenAlgo. Recorded in evidence/gate_0.json when Part A runs. Until then it is NOT_SET.
 - Route: OpenAlgo Analyzer Mode.
 - Environment: Surya's own machine.
 - Instrument: NSE `RELIANCE`, cash equity.
@@ -20,7 +20,7 @@ Analyzer Mode isolation, current provider terms, and the installed-version order
 
 ## Part A — any time
 
-1. Install/configure the selected existing tools and read the installed-version OpenAlgo and Angel One documentation. Establish how Analyzer Mode handles orders and how a read-only broker order-book check is performed. If isolation or read visibility cannot be established, Part A is **BLOCKED**.
+1. Install/configure the selected existing tools and read the installed-version OpenAlgo documentation and the connected broker's documentation. Establish how Analyzer Mode handles orders and how a read-only broker order-book check is performed. If isolation or read visibility cannot be established, Part A is **BLOCKED**.
 2. Record the OpenAlgo and relevant tool versions, selected provider/instrument/environment, Analyzer Mode state, ₹2,000 capital and 1× leverage setting. Do not record credentials.
 3. Search all STYX-owned source and configuration for direct broker-order call sites. Separately audit the installed OpenAlgo version's active execution registration and routing path. Prove no real-broker execution path is registered or invoked; unused vendor implementation code alone is not evidence that a path is active.
 4. Confirm the configured route is in Analyzer Mode before any order. Do not submit the test order unless all Part A isolation checks pass.
@@ -29,12 +29,19 @@ Analyzer Mode isolation, current provider terms, and the installed-version order
 
 Part B runs only during a regular NSE cash-equity session verified against an authoritative current exchange calendar. Outside that session, including holidays and special/extended sessions, Part B is **BLOCKED as expected**, not failed.
 
-1. Require a quiet order-activity window on the same Angel One account used by the configured data path, from the baseline through the post-test snapshot. If that cannot be guaranteed, Part B is **BLOCKED**.
+1. Require a quiet order-activity window on the same connected broker account used by the configured data path, from the baseline through the post-test snapshot. If that cannot be guaranteed, Part B is **BLOCKED**.
 2. Take a timestamped, read-only broker order-book baseline. Use the app or a documented read-only API; do not guess an API name or log credentials.
 3. Use the installed-version documented funds requirement for the specified one-share order, including applicable charges. If the requirement is unknown or exceeds ₹2,000, do not submit; request Surya's approval before increasing the test amount. Never change quantity or leverage automatically.
 4. After Part A passes and the funds check fits, submit exactly the approved virtual order: one market Buy of one NSE `RELIANCE` cash-equity share, product MIS, at 1×. No live order may be placed, enabled, or prepared.
-5. After the documented order-book visibility interval, take a timestamped, read-only snapshot of the same Angel One order book. A new broker-side order is a Gate 0 **FAIL** and stops the test. If the read is unavailable or visibility is uncertain, Part B is **BLOCKED**.
+5. After the documented order-book visibility interval, take a timestamped, read-only snapshot of that broker's order book. A new broker-side order is a Gate 0 **FAIL** and stops the test. If the read is unavailable or visibility is uncertain, Part B is **BLOCKED**.
 6. Confirm the order is recorded as virtual in Analyzer Mode and the route-specific guard/test shows no real-broker order path was registered or invoked.
+
+## Provider notes
+
+- **Fyers:** the access token expires around 6 AM IST every day, so Surya logs in again through OpenAlgo each trading morning before Part A or Part B. Confirm the exact expiry in the installed-version docs. The sign-in is OAuth-style through Fyers' own page, using the app's App ID and secret.
+- **Angel One:** OpenAlgo's Angel login takes the client code, PIN and a TOTP. Session length is UNVERIFIED until checked in the installed-version docs.
+- Both brokers' tokens are order-capable. The boundary proof does not depend on which broker is chosen.
+- Switching provider after a Gate 0 run requires a new Gate 0 run and new evidence.
 
 ## Gate result
 

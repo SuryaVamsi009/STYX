@@ -52,6 +52,18 @@ def validate_gate_0(evidence_path: Path) -> int:
         print(f"ERROR: Missing required scope keys: {missing_scope}")
         return 1
 
+    # Validate provider
+    provider = scope.get("provider")
+    allowed_providers = ["NOT_SET", "Angel One", "Fyers"]
+    if provider not in allowed_providers:
+        print(f"ERROR: Invalid provider '{provider}'. Must be one of {allowed_providers}")
+        return 1
+
+    # If status is pass, provider must be Angel One or Fyers (not NOT_SET)
+    if data["status"] == "pass" and provider == "NOT_SET":
+        print("ERROR: Provider must be 'Angel One' or 'Fyers' when status is 'pass', not 'NOT_SET'")
+        return 1
+
     # Validate instrument
     instrument = scope.get("instrument", {})
     required_instrument_keys = ["symbol", "exchange", "asset_type", "product"]
@@ -91,14 +103,23 @@ def validate_gate_0(evidence_path: Path) -> int:
 def main():
     parser = argparse.ArgumentParser(description="Validate STYX gate evidence files")
     parser.add_argument("--gate", type=int, required=True, help="Gate number to validate")
+    parser.add_argument(
+        "--evidence-file",
+        type=Path,
+        help="Path to evidence file (default: evidence/gate_<n>.json)",
+    )
     args = parser.parse_args()
 
-    evidence_dir = Path("evidence")
-    evidence_file = evidence_dir / f"gate_{args.gate}.json"
+    if args.evidence_file:
+        evidence_file = args.evidence_file
+    else:
+        evidence_dir = Path("evidence")
+        evidence_file = evidence_dir / f"gate_{args.gate}.json"
 
     if not evidence_file.exists():
         print(f"ERROR: No evidence file found: {evidence_file}")
-        print(f"Searched in: {evidence_dir}")
+        if not args.evidence_file:
+            print(f"Searched in: {evidence_dir}")
         return 1
 
     # Route to appropriate validator based on gate number
