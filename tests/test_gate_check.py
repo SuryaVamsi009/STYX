@@ -68,7 +68,7 @@ def _minimal_gate_0_evidence(provider: str = "NOT_SET", status: str = "blocked")
             "paper_order": {"side": "Buy", "type": "Market", "quantity": 1, "status": "NOT_RUN"},
         },
         "approved_test_only_capital": {
-            "amount_inr": 2000,
+            "amount_inr": 100000,
             "approved_by": "Surya",
             "purpose": "Single Gate 0 paper-order exercise only",
             "is_planning_capital": False,
