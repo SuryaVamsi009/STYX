@@ -1,16 +1,25 @@
 {
   "gate": 0,
   "status": "blocked",
-  "recorded_at": "2026-11-08",
+  "recorded_at": "2026-11-10",
   "scope": {
-    "provider": "NOT_SET",
+    "provider": "Fyers",
     "route": "OpenAlgo Analyzer Mode",
     "environment": "Surya's own machine",
     "tool_versions": {
-      "openalgo": "UNVERIFIED",
-      "broker_integration": "UNVERIFIED"
+      "openalgo": {
+        "app_footer": "2.0.3.3",
+        "app_info_endpoint": "2.0.3.3",
+        "source_version": "2.0.3.3",
+        "git_revision_from_installed_metadata": "a1b9e32506bce21403a8614dddeed0ab61fd519a",
+        "git_revision_command": {
+          "command": "git -C vendor/openalgo rev-parse HEAD",
+          "status": "NOT_RUN",
+          "actual_output": "xcode-select: error: No developer tools were found and no install could be requested (possibly because there is no active GUI session)."
+        }
+      },
+      "broker_integration": "Fyers API v3 plugin at vendor/openalgo/broker/fyers"
     },
-    "allowed_providers": ["Angel One", "Fyers"],
     "broker_account_reference": "NOT_RECORDED",
     "instrument": {
       "symbol": "RELIANCE",
@@ -44,10 +53,122 @@
     "approved_capital_note": "₹2,000 was the first approved test capital. OpenAlgo's sandbox only allows ₹1L, ₹5L, ₹10L, ₹25L, ₹50L or ₹1Cr, so Surya approved ₹1,00,000, the smallest allowed value, on 10 Nov 2026. Patching OpenAlgo to allow ₹2,000 was rejected, because Gate 0 must test the unmodified installed version."
   },
   "checks": {
-    "installed_openalgo_version": "UNVERIFIED",
-    "version_matched_analyzer_mode_docs": "UNVERIFIED",
-    "provider_terms": "UNVERIFIED",
-    "analyzer_mode_pre_order_state": "NOT_RUN",
+    "installed_openalgo_version": {
+      "status": "VERIFIED",
+      "value": "2.0.3.3",
+      "evidence": [
+        "OpenAlgo app footer at http://127.0.0.1:5000/: v 2.0.3.3",
+        "GET /auth/app-info returned {\"name\":\"OpenAlgo\",\"status\":\"success\",\"version\":\"2.0.3.3\"}",
+        "vendor/openalgo/utils/version.py:4",
+        "vendor/openalgo/docs/releases/version-2.0.3.3-released.md:1-3"
+      ]
+    },
+    "version_matched_analyzer_mode_docs": {
+      "status": "STATIC_DOCS_VERIFIED",
+      "evidence": [
+        "vendor/openalgo/docs/userguide/15-analyzer-mode/README.md:5-7 states supported operations route to the sandbox and simulated state is stored in db/sandbox.db",
+        "vendor/openalgo/docs/userguide/15-analyzer-mode/README.md:27 states turning Analyzer Mode off returns supported order flows to live broker execution",
+        "vendor/openalgo/docs/userguide/15-analyzer-mode/README.md:64-70 gives the documented verification workflow",
+        "vendor/openalgo/docs/api/analyzer-services/analyzerstatus.md:31-40 documents analyze_mode=true and mode=analyze",
+        "vendor/openalgo/database/settings_db.py:88-110 reads the persisted analyze_mode flag, defaulting to live when absent"
+      ]
+    },
+    "analyzer_mode_source_and_sandbox_write": {
+      "status": "STATIC_SOURCE_VERIFIED",
+      "mode_flag_read": [
+        "vendor/openalgo/database/settings_db.py:88-110 get_analyze_mode() reads Settings.analyze_mode",
+        "vendor/openalgo/services/place_order_service.py:167-201 branches on get_analyze_mode()"
+      ],
+      "sandbox_diversion": [
+        "vendor/openalgo/services/place_order_service.py:167-180 calls sandbox_place_order() when Analyzer Mode is on",
+        "vendor/openalgo/services/sandbox_service.py:42-95 maps the request and calls OrderManager.place_order()"
+      ],
+      "sandbox_write": [
+        "vendor/openalgo/sandbox/order_manager.py:698-727 constructs SandboxOrders and commits it with db_session.commit()",
+        "vendor/openalgo/sandbox/order_manager.py:1246-1318 reads the current-session SandboxOrders rows into the sandbox order-book response"
+      ]
+    },
+    "provider_terms": {
+      "status": "VERIFIED",
+      "provider": "Fyers",
+      "source_url": "https://fyers.in/api-docs/v3/getting-started/create-an-app/",
+      "source_last_updated": "October 14, 2026",
+      "observed_on": "2026-11-10",
+      "finding": "Fyers documents one Individual trading app with order placement and any number of non-trading apps marked data only; therefore a Fyers non-trading app does not place orders."
+    },
+    "active_openalgo_route_audit": {
+      "status": "STATIC_SOURCE_VERIFIED_RUNTIME_NOT_RUN",
+      "api_order_routes": [
+        {
+          "route": "POST /api/v1/placeorder",
+          "entry": "vendor/openalgo/restx_api/place_order.py:22-43",
+          "guard_and_sandbox": "vendor/openalgo/services/place_order_service.py:167-201",
+          "live_reach": "vendor/openalgo/services/place_order_service.py:203-224 calls broker_module.place_order_api() only when the Analyzer branch is not taken"
+        },
+        {
+          "route": "POST /api/v1/placesmartorder",
+          "entry": "vendor/openalgo/restx_api/place_smart_order.py:25-58",
+          "guard_and_sandbox": "vendor/openalgo/services/place_smart_order_service.py:150-199",
+          "live_reach": "vendor/openalgo/services/place_smart_order_service.py:201-216 calls broker_module.place_smartorder_api() only in Live Mode"
+        },
+        {
+          "route": "POST /api/v1/basketorder",
+          "entry": "vendor/openalgo/restx_api/basket_order.py:26-59",
+          "guard_and_sandbox": "vendor/openalgo/services/basket_order_service.py:210-326",
+          "live_reach": "vendor/openalgo/services/basket_order_service.py:328-340 begins the live broker branch"
+        },
+        {
+          "route": "POST /api/v1/splitorder",
+          "entry": "vendor/openalgo/restx_api/split_order.py:25-58",
+          "guard_and_sandbox": "vendor/openalgo/services/split_order_service.py:239-361",
+          "live_reach": "vendor/openalgo/services/split_order_service.py:368 onward begins the live broker branch"
+        }
+      ],
+      "ui_order_route": {
+        "route": "POST /close_position",
+        "guard_and_sandbox": "vendor/openalgo/blueprints/orders.py:504-562 checks get_analyze_mode() and calls place_smart_order() with the sandbox API key",
+        "live_reach": "vendor/openalgo/blueprints/orders.py:564-596 dynamically imports and calls place_smartorder_api() only after the Analyzer branch"
+      },
+      "fyers_live_functions": [
+        "vendor/openalgo/broker/fyers/api/order_api.py:193-240 place_order_api() posts to Fyers /api/v3/orders/sync",
+        "vendor/openalgo/broker/fyers/api/order_api.py:114-115 get_order_book() reads Fyers /api/v3/orders"
+      ],
+      "conclusion": "The installed source shows the Analyzer guard is the branch between these entry points and the Fyers order functions; no runtime invocation test was run."
+    },
+    "real_order_path_guard": "UNVERIFIED_RUNTIME_GUARD_TEST_NOT_RUN",
+    "broker_orderbook_visibility_docs": {
+      "status": "DOCUMENTED",
+      "read_only_check": "POST /api/v1/orderbook with an OpenAlgo API key",
+      "documentation": "vendor/openalgo/docs/api/account-services/orderbook.md:5-29",
+      "installed_route": "vendor/openalgo/services/orderbook_service.py:105-177 checks Analyzer Mode with original_data and otherwise calls the broker get_order_book function",
+      "fyers_route": "vendor/openalgo/broker/fyers/api/order_api.py:114-115"
+    },
+    "analyzer_mode_pre_order_state": {
+      "status": "UNVERIFIED",
+      "documented_read": "GET /auth/analyzer-mode",
+      "source": "vendor/openalgo/blueprints/auth.py:1242-1265",
+      "actual_browser_result": "Unauthenticated local browser request redirected to /login; no current mode value was returned",
+      "requested_gate_0_values": {
+        "analyzer_mode": "on",
+        "starting_capital_inr": 100000,
+        "equity_mis_leverage": "1x"
+      },
+      "current_values": "NOT_RUN"
+    },
+    "sandbox_settings_read": {
+      "status": "UNVERIFIED",
+      "documented_read": "GET /sandbox/api/configs",
+      "source": "vendor/openalgo/blueprints/sandbox.py:104-212",
+      "actual_browser_result": "Unauthenticated local browser request redirected to /login; no current settings were returned",
+      "current_values": "NOT_RUN"
+    },
+    "capital_requirement_including_charges": {
+      "status": "UNVERIFIED",
+      "documented_margin_rule": "vendor/openalgo/docs/design/07-sandbox/README.md:345-380 and vendor/openalgo/sandbox/fund_manager.py:836-865 specify margin = quantity × price ÷ leverage; the installed code selects equity MIS leverage at vendor/openalgo/sandbox/fund_manager.py:871-881",
+      "one_share_mis_at_requested_1x": "margin = live RELIANCE price × 1 ÷ 1",
+      "charges": "No brokerage, STT, exchange, SEBI, stamp-duty, or GST calculation is present in the sandbox order margin path. vendor/openalgo/portfolio/costs.py:157-195 is a separate India delivery schedule, not a documented MIS sandbox requirement.",
+      "price_requirement": "A live RELIANCE price at Part B time is required; no price was invented or fetched for this blocked run."
+    },
     "styx_source_order_call_search": {
       "status": "NO_MATCHES_FOUND",
       "patterns": [
@@ -57,24 +178,35 @@
         "FyersLiveExecClientFactory",
         "exec_clients"
       ],
-      "search_result": "No matches found"
+      "scope": "STYX-owned files excluding vendor/, evidence/, tests/, instructions.md, AGENTS.md and skill files",
+      "search_result": "rg exited 1 with no output (no matches)"
     },
-    "active_openalgo_route_audit": "NOT_RUN",
-    "real_order_path_guard": "NOT_RUN",
-    "capital_requirement_including_charges": "UNVERIFIED",
     "nse_regular_session": "NOT_RUN",
     "quiet_account_window": "NOT_RUN",
-    "broker_orderbook_visibility_docs": "UNVERIFIED",
     "broker_orderbook_before_snapshot": "NOT_RUN",
     "broker_orderbook_after_snapshot": "NOT_RUN",
     "virtual_order_record": "NOT_RUN",
-    "part_a": "NOT_RUN",
+    "part_a": "BLOCKED",
     "part_b": "NOT_RUN",
-    "gate_check": "NOT_RUN"
+    "gate_check": {
+      "status": "NOT_RUN",
+      "command": "python scripts/gate_check.py --gate 0",
+      "actual_output": "bash: /Users/suryavamsipichika/.pyenv/shims/python: Operation not permitted",
+      "exit_code": 126
+    },
+    "status_write": {
+      "status": "NOT_RUN",
+      "command": "python scripts/status.py --write",
+      "actual_output": "bash: /Users/suryavamsipichika/.pyenv/shims/python: Operation not permitted",
+      "exit_code": 126
+    }
   },
   "blockers": [
-    "No local OpenAlgo installation or installed-version documentation is available; Analyzer Mode isolation is UNVERIFIED.",
-    "Part A and Part B have not been run."
+    "The required git -C vendor/openalgo rev-parse HEAD command could not execute because the host has no active Xcode command-line tools; the installed metadata hash is recorded separately and is not claimed as command output.",
+    "The local app's authenticated read-only Analyzer Mode and sandbox settings endpoints redirected to /login, so current analyzer_mode, capital, and MIS leverage were not verified from the app.",
+    "The charge-inclusive one-share MIS requirement is UNVERIFIED: the installed sandbox documents margin as price × quantity ÷ leverage but does not document charges in that path, and the live RELIANCE price for Part B was not obtained.",
+    "Runtime route-guard test, broker order-book baseline/post snapshots, virtual order record, Part A completion, and Part B have not been run.",
+    "The requested Python gate_check.py and status.py commands remain NOT_RUN because Python/uv on this host are unavailable behind the same developer-tools restriction."
   ],
   "credentials_recorded": false
 }
