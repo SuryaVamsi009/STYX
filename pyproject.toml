@@ -18,6 +18,7 @@ package = false
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+exclude = [".github/skills"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
@@ -28,3 +29,4 @@ testpaths = ["tests"]
 [tool.mypy]
 python_version = "3.12"
 ignore_missing_imports = true
+exclude = [".github/skills"]
