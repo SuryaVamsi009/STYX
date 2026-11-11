@@ -33,7 +33,7 @@ def test_required_files():
         ".gitignore",
         ".pre-commit-config.yaml",
         ".github/workflows/ci.yml",
-        ".github/workflows/copilot-setup-steps.yml",
+        ".github/copilot-setup-steps.yml",
     ]
     for file_path in required_files:
         assert Path(file_path).exists(), f"Missing file: {file_path}"
