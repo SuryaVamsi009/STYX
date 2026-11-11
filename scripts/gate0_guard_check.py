@@ -52,8 +52,25 @@ os.environ["FLASK_ENV"] = "development"
 os.environ["HOST_SERVER"] = "http://127.0.0.1:5000"
 os.environ["NGROK_ALLOW"] = "FALSE"
 
-# Add vendor/openalgo to sys.path
-_vendor_path = Path("/Users/suryavamsipichika/GitHub/STYX/vendor/openalgo")
+# Add vendor/openalgo to sys.path - find it dynamically
+# The script can be run from vendor/openalgo:
+#   cd vendor/openalgo && python ../../scripts/gate0_guard_check.py
+# Or from repo root: python scripts/gate0_guard_check.py
+# In the worktree, vendor is in the main GitHub checkout.
+# On CI, vendor is cloned into repo root.
+_script_path = Path(__file__).resolve()
+
+# Check if we're in vendor/openalgo by looking for database/ directory
+if (_script_path.parent.parent / "database").exists():
+    # Running from vendor/openalgo directory
+    _vendor_path = _script_path.parent.parent
+else:
+    # Running from repo root, check for vendor/openalgo in repo root (CI case)
+    _vendor_path = _script_path.parent.parent / "vendor" / "openalgo"
+    if not _vendor_path.exists():
+        # Fall back to main GitHub checkout (local worktree case)
+        _vendor_path = Path("/Users/suryavamsipichika/GitHub/STYX/vendor/openalgo")
+
 sys.path.insert(0, str(_vendor_path))
 
 # =============================================================================

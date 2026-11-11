@@ -23,6 +23,12 @@ jobs:
         with:
           submodules: true
 
+      - name: Set up vendor/openalgo
+        run: |
+          git clone https://github.com/marketcalls/openalgo.git vendor/openalgo
+          cd vendor/openalgo
+          git checkout a1b9e32506bce21403a8614dddeed0ab61fd519a
+
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
