@@ -80,7 +80,7 @@ Work in order. Record each gate as **pass**, **fail** or **blocked** with eviden
 
 | Gate | Goal | Done when |
 | --- | --- | --- |
-| 0. Scope and safety | Choose provider, instruments, environment. Prove no live-order path exists. | Scope record names provider, instruments, environment, tool versions. A test shows that no real-broker execution client is registered and that orders land in the sandbox. |
+| 0. Scope and safety | Choose provider, instruments, environment. Prove the selected paper route has no real-order path. | Scope record names provider, instruments, environment and tool versions. A test proves no real-broker order path is registered or invoked, the selected route records the test order virtually, and the broker's own order book shows no new order. |
 | 1. Data path | Prove the chosen source gives usable, reproducible history. | A live quote and a bounded multi-instrument history are loaded. Calendar, timestamps, duplicates, gaps and adjustments are checked and reported. A dataset snapshot id and a quality report are saved. |
 | 2. Accounting | Prove simulated accounting matches hand calculation. | A synthetic trade ledger reconciles to a hand calculation within a stated tolerance. Signal-to-fill timing is tested (next bar or later, daily bars stamped at session close). The cost config has `as_of` and `source`. |
 | 3. Paper smoke test | One paper route runs a session and produces a reconcilable log. | One route chosen (A or B below), session completed, ledger reconciled, no live order sent or prepared. |
@@ -88,10 +88,16 @@ Work in order. Record each gate as **pass**, **fail** or **blocked** with eviden
 | 5. Protocol freeze | Deferred until a strategy is evaluated. | Surya approves a written protocol first (section 7). |
 | 6. Evidence review | Preserve and review. | Every gate has its evidence, versions, configs and limitations stored. |
 
+`python scripts/status.py` is the quick answer to "where are we?".
+
 Paper routes for Gate 3. Pick one and test only that:
 
 - **Route B, OpenAlgo Analyzer Mode** (fastest): virtual capital on real broker prices. Set the sandbox capital to Surya's approved planning capital, not the 1 Cr default. Confirm Analyzer Mode is on before any order. Run the validation workflow: market order, limit order away from market, modify, cancel, square-off, reset.
 - **Route A, NautilusTrader sandbox execution on Fyers data**: register the Fyers data client and NautilusTrader's sandbox execution client only. Never register `FyersLiveExecClientFactory`. Class and config names are unverified until checked against the installed version.
+
+**Gate 0 Route B exception, approved by Surya:** The single Gate 0 paper-order exercise uses ₹1,00,000 (1 lakh) of Analyzer Mode capital at 1× (no leverage) for one market Buy of one NSE `RELIANCE` cash-equity share, product MIS. This is test-only capital, not planning capital or strategy evidence; no F&O is used. Do not submit the order until Analyzer Mode isolation is verified. Record the capital and leverage in `evidence/gate_0.json`. If the documented funds requirement including applicable charges is unknown or exceeds ₹1,00,000 (1 lakh), stop and request Surya's approval before raising the test amount; never increase leverage or change the quantity automatically. Before Gate 3 or any research or strategy run, reset to Surya-approved planning capital.
+
+₹2,000 was the first approved test capital. OpenAlgo's sandbox only allows ₹1L, ₹5L, ₹10L, ₹25L, ₹50L or ₹1Cr, so Surya approved ₹1,00,000, the smallest allowed value, on 10 Nov 2026. Patching OpenAlgo to allow ₹2,000 was rejected, because Gate 0 must test the unmodified installed version.
 
 ## 6. Research loop
 
@@ -166,7 +172,7 @@ State what is unknown and what evidence would settle it. Stop at the affected ga
 
 | Decision | Why it matters |
 | --- | --- |
-| First data provider: Angel One or Fyers | Fyers has the Nautilus adapter (alpha). Angel One free history covers equity and NFO futures. Both are on OpenAlgo's list. |
+| First data provider: Angel One or Fyers | Gate 0 is provider-neutral; the provider is recorded when Part A runs. Fyers has the Nautilus adapter (alpha). Angel One free history covers equity and NFO futures. Both are on OpenAlgo's list. |
 | Hosting: own machine or always-on server | Sets how token expiry (Fyers about 6 AM IST daily) and restarts are handled. |
 | First paper route: A or B | Gate 3 tests one route only. |
 | Planning capital and loss limits | Not set anywhere in this project. Needed for sandbox capital and sizing. |
@@ -180,3 +186,16 @@ State what is unknown and what evidence would settle it. Stop at the affected ga
 - Research Stack Plan and Agent Instructions (the gate plan).
 - Repository Integration Plan (code sketches, cost model, gate checker). All code in it is an untested sketch.
 - ATLAS Research Process: Audit, Design and Plan (the research loop).
+
+## 12. AI-operated system
+
+STYX's primary operator is an AI agent. Humans approve, the AI operates. Design rules:
+
+1. All state is machine-readable files, with a `styx status --json` summary.
+2. Every action is a command with an exit code and JSON output.
+3. The AI process holds no broker credentials and talks only to OpenAlgo, and every action first confirms Analyzer Mode is on and refuses otherwise.
+4. BLOCKED and FAIL mean stop, with a `STOP` file that halts all jobs.
+5. Capital, limits, protocols and merges need human-created approval records that the AI cannot write.
+6. Every AI action is logged append-only.
+7. Results are deterministic and replayable from saved snapshots.
+8. The AI has rate and run limits.

@@ -1,0 +1,20 @@
+{
+  "gates": [
+    {"id": "G0", "n": 0, "name": "Scope and safety"},
+    {"id": "G1", "n": 1, "name": "Data path"},
+    {"id": "G2", "n": 2, "name": "Accounting"},
+    {"id": "G3", "n": 3, "name": "Paper smoke test"},
+    {"id": "G4", "n": 4, "name": "Operational safety"},
+    {"id": "G5", "n": 5, "name": "Protocol freeze", "deferred": true},
+    {"id": "G6", "n": 6, "name": "Evidence review"}
+  ],
+  "research": [
+    {"id": "R1", "name": "Call registry"},
+    {"id": "R2", "name": "Scan to JSON"},
+    {"id": "R3", "name": "Grader v2"},
+    {"id": "R4", "name": "Scoreboard"},
+    {"id": "R5", "name": "Research AI v2"},
+    {"id": "R6", "name": "Promotion"}
+  ],
+  "research_starts_after": "G4"
+}
