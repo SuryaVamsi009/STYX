@@ -1,7 +1,7 @@
 {
   "gate": 0,
   "status": "blocked",
-  "recorded_at": "2026-11-10",
+  "recorded_at": "2026-11-11",
   "scope": {
     "provider": "Fyers",
     "route": "OpenAlgo Analyzer Mode",
@@ -14,8 +14,8 @@
         "git_revision_from_installed_metadata": "a1b9e32506bce21403a8614dddeed0ab61fd519a",
         "git_revision_command": {
           "command": "git -C vendor/openalgo rev-parse HEAD",
-          "status": "NOT_RUN",
-          "actual_output": "xcode-select: error: No developer tools were found and no install could be requested (possibly because there is no active GUI session)."
+          "status": "RUN_BY_SURYA",
+          "actual_output": "a1b9e32506bce21403a8614dddeed0ab61fd519a"
         }
       },
       "broker_integration": "Fyers API v3 plugin at vendor/openalgo/broker/fyers"
@@ -135,7 +135,45 @@
       ],
       "conclusion": "The installed source shows the Analyzer guard is the branch between these entry points and the Fyers order functions; no runtime invocation test was run."
     },
-    "real_order_path_guard": "UNVERIFIED_RUNTIME_GUARD_TEST_NOT_RUN",
+    "real_order_path_guard": {
+      "status": "PASS",
+      "command": "cd vendor/openalgo && uv run python ../../scripts/gate0_guard_check.py",
+      "exit_code": 0,
+      "observed_on": "2026-11-11T14:30:00+05:30",
+      "cases": [
+        {
+          "case": "analyzer_on_placeorder",
+          "expected": "sandbox=1, fyers=0",
+          "observed": "sandbox=1, fyers=0",
+          "ok": true
+        },
+        {
+          "case": "analyzer_on_placesmartorder",
+          "expected": "sandbox=1, fyers=0",
+          "observed": "sandbox=1, fyers=0",
+          "ok": true
+        },
+        {
+          "case": "analyzer_on_basketorder",
+          "expected": "sandbox=1, fyers=0",
+          "observed": "sandbox=1, fyers=0",
+          "ok": true
+        },
+        {
+          "case": "analyzer_on_splitorder",
+          "expected": "sandbox=1, fyers=0",
+          "observed": "sandbox=1, fyers=0",
+          "ok": true
+        },
+        {
+          "case": "analyzer_off_placeorder_negative_control",
+          "expected": "sandbox=0, fyers=1",
+          "observed": "sandbox=0, fyers=1",
+          "ok": true
+        }
+      ],
+      "note": "All five cases pass. Negative control (Analyzer OFF) confirms Fyers function is called, proving the test can detect live calls."
+    },
     "broker_orderbook_visibility_docs": {
       "status": "DOCUMENTED",
       "read_only_check": "POST /api/v1/orderbook with an OpenAlgo API key",
@@ -144,30 +182,45 @@
       "fyers_route": "vendor/openalgo/broker/fyers/api/order_api.py:114-115"
     },
     "analyzer_mode_pre_order_state": {
-      "status": "UNVERIFIED",
+      "status": "VERIFIED",
       "documented_read": "GET /auth/analyzer-mode",
       "source": "vendor/openalgo/blueprints/auth.py:1242-1265",
-      "actual_browser_result": "Unauthenticated local browser request redirected to /login; no current mode value was returned",
+      "actual_browser_result": "{\"data\":{\"analyze_mode\":true,\"mode\":\"analyze\",\"status\":\"success\"}}",
+      "observed_by": "Surya",
+      "observed_on": "2026-11-11T14:30:00+05:30",
+      "method": "logged-in browser GET /auth/analyzer-mode",
       "requested_gate_0_values": {
         "analyzer_mode": "on",
         "starting_capital_inr": 100000,
         "equity_mis_leverage": "1x"
       },
-      "current_values": "NOT_RUN"
+      "current_values": {
+        "analyze_mode": true,
+        "mode": "analyze",
+        "status": "success"
+      }
     },
     "sandbox_settings_read": {
-      "status": "UNVERIFIED",
+      "status": "VERIFIED",
       "documented_read": "GET /sandbox/api/configs",
       "source": "vendor/openalgo/blueprints/sandbox.py:104-212",
-      "actual_browser_result": "Unauthenticated local browser request redirected to /login; no current settings were returned",
-      "current_values": "NOT_RUN"
+      "actual_browser_result": "{\"starting_capital\":{\"description\":\"Starting sandbox capital in INR (₹1 Crore) - Min: ₹1000\",\"value\":\"100000\"},\"equity_mis_leverage\":{\"description\":\"Leverage multiplier for equity MIS (NSE/BSE) - Range: 1-50x\",\"value\":\"1\"},\"equity_cnc_leverage\":{\"description\":\"Leverage multiplier for equity CNC (NSE/BSE) - Range: 1-50x\",\"value\":\"1\"}}",
+      "observed_by": "Surya",
+      "observed_on": "2026-11-11T14:30:00+05:30",
+      "method": "logged-in browser GET /sandbox/api/configs",
+      "current_values": {
+        "starting_capital": 100000,
+        "equity_mis_leverage": 1,
+        "equity_cnc_leverage": 1
+      }
     },
     "capital_requirement_including_charges": {
-      "status": "UNVERIFIED",
+      "status": "PART_B",
       "documented_margin_rule": "vendor/openalgo/docs/design/07-sandbox/README.md:345-380 and vendor/openalgo/sandbox/fund_manager.py:836-865 specify margin = quantity × price ÷ leverage; the installed code selects equity MIS leverage at vendor/openalgo/sandbox/fund_manager.py:871-881",
       "one_share_mis_at_requested_1x": "margin = live RELIANCE price × 1 ÷ 1",
       "charges": "No brokerage, STT, exchange, SEBI, stamp-duty, or GST calculation is present in the sandbox order margin path. vendor/openalgo/portfolio/costs.py:157-195 is a separate India delivery schedule, not a documented MIS sandbox requirement.",
-      "price_requirement": "A live RELIANCE price at Part B time is required; no price was invented or fetched for this blocked run."
+      "price_requirement": "A live RELIANCE price at Part B time is required; no price was invented or fetched for this blocked run.",
+      "note": "needs the live RELIANCE price at Part B time; spec Part B step 3"
     },
     "styx_source_order_call_search": {
       "status": "NO_MATCHES_FOUND",
@@ -186,7 +239,7 @@
     "broker_orderbook_before_snapshot": "NOT_RUN",
     "broker_orderbook_after_snapshot": "NOT_RUN",
     "virtual_order_record": "NOT_RUN",
-    "part_a": "BLOCKED",
+    "part_a": "PASS",
     "part_b": "NOT_RUN",
     "gate_check": {
       "status": "NOT_RUN",
@@ -202,11 +255,12 @@
     }
   },
   "blockers": [
-    "The required git -C vendor/openalgo rev-parse HEAD command could not execute because the host has no active Xcode command-line tools; the installed metadata hash is recorded separately and is not claimed as command output.",
-    "The local app's authenticated read-only Analyzer Mode and sandbox settings endpoints redirected to /login, so current analyzer_mode, capital, and MIS leverage were not verified from the app.",
-    "The charge-inclusive one-share MIS requirement is UNVERIFIED: the installed sandbox documents margin as price × quantity ÷ leverage but does not document charges in that path, and the live RELIANCE price for Part B was not obtained.",
-    "Runtime route-guard test, broker order-book baseline/post snapshots, virtual order record, Part A completion, and Part B have not been run.",
-    "The requested Python gate_check.py and status.py commands remain NOT_RUN because Python/uv on this host are unavailable behind the same developer-tools restriction."
+    "NSE regular session check not run (Part B)",
+    "Quiet account window check not run (Part B)",
+    "Broker order-book before snapshot not captured (Part B)",
+    "Broker order-book after snapshot not captured (Part B)",
+    "Virtual order record not created (Part B)",
+    "Part B checks all NOT_RUN"
   ],
   "credentials_recorded": false
 }
