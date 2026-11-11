@@ -10,15 +10,34 @@ import subprocess
 from pathlib import Path
 
 
+def get_repo_root():
+    """Get the repository root directory."""
+    return Path(__file__).parent.parent
+
+
 def get_vendor_openalgo_path():
-    """Get the path to vendor/openalgo (in main checkout, not worktree)."""
-    # The vendor directory is in the main GitHub checkout
-    return Path("/Users/suryavamsipichika/GitHub/STYX/vendor/openalgo")
+    """Get the path to vendor/openalgo.
+
+    In the worktree, vendor is in the main GitHub checkout.
+    On CI, vendor is in the repo root (full checkout).
+    """
+    # First check the repo root (CI case)
+    repo_root_path = get_repo_root() / "vendor" / "openalgo"
+    if repo_root_path.exists():
+        return repo_root_path
+
+    # Fall back to main GitHub checkout (local worktree case)
+    main_checkout = Path("/Users/suryavamsipichika/GitHub/STYX/vendor/openalgo")
+    if main_checkout.exists():
+        return main_checkout
+
+    # Last resort: return repo root path (will fail with clear error)
+    return repo_root_path
 
 
 def get_script_path():
     """Get the path to the guard check script."""
-    return Path(__file__).parent.parent / "scripts" / "gate0_guard_check.py"
+    return get_repo_root() / "scripts" / "gate0_guard_check.py"
 
 
 def run_guard_script():
