@@ -97,7 +97,7 @@
       "finding": "Fyers documents one Individual trading app with order placement and any number of non-trading apps marked data only; therefore a Fyers non-trading app does not place orders."
     },
     "active_openalgo_route_audit": {
-      "status": "STATIC_SOURCE_VERIFIED_RUNTIME_NOT_RUN",
+      "status": "STATIC_SOURCE_VERIFIED_RUNTIME_API_ROUTES_VERIFIED",
       "api_order_routes": [
         {
           "route": "POST /api/v1/placeorder",
@@ -133,13 +133,14 @@
         "vendor/openalgo/broker/fyers/api/order_api.py:193-240 place_order_api() posts to Fyers /api/v3/orders/sync",
         "vendor/openalgo/broker/fyers/api/order_api.py:114-115 get_order_book() reads Fyers /api/v3/orders"
       ],
-      "conclusion": "The installed source shows the Analyzer guard is the branch between these entry points and the Fyers order functions; no runtime invocation test was run."
+      "conclusion": "The installed source shows the Analyzer guard is the branch between these entry points and the Fyers order functions. The version-matched runtime guard passed for all four API service routes, and its Analyzer-OFF negative control detected the Fyers call; the UI close_position route is covered by the static audit and delegates to the tested place_smart_order service."
     },
     "real_order_path_guard": {
       "status": "PASS",
       "command": "cd vendor/openalgo && uv run python ../../scripts/gate0_guard_check.py",
+      "execution_context": "The local worktree uses the configured OpenAlgo vendor checkout; the guard script resolves that checkout dynamically when vendor/openalgo is absent from the worktree.",
       "exit_code": 0,
-      "observed_on": "2026-11-11T14:30:00+05:30",
+      "observed_on": "2026-11-11T16:50:31+05:30",
       "cases": [
         {
           "case": "analyzer_on_placeorder",
@@ -242,16 +243,18 @@
     "part_a": "PASS",
     "part_b": "NOT_RUN",
     "gate_check": {
-      "status": "NOT_RUN",
+      "status": "PASS",
       "command": "python scripts/gate_check.py --gate 0",
-      "actual_output": "bash: /Users/suryavamsipichika/.pyenv/shims/python: Operation not permitted",
-      "exit_code": 126
+      "execution_environment": "Configured Python 3.12.7 executable",
+      "actual_output": "Gate 0 evidence validated successfully: 0 - blocked",
+      "exit_code": 0
     },
     "status_write": {
-      "status": "NOT_RUN",
+      "status": "PASS",
       "command": "python scripts/status.py --write",
-      "actual_output": "bash: /Users/suryavamsipichika/.pyenv/shims/python: Operation not permitted",
-      "exit_code": 126
+      "execution_environment": "Configured Python 3.12.7 executable",
+      "actual_output": "Written STATUS.md",
+      "exit_code": 0
     }
   },
   "blockers": [
