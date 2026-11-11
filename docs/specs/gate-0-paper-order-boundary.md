@@ -58,5 +58,9 @@ Record the scope, versions, configuration/mode state, route audit, test-only cap
 
 ## Current blockers
 
-- No local OpenAlgo installation or installed-version documentation is available; Analyzer Mode isolation is **UNVERIFIED**.
-- Part A and Part B have not been run.
+- NSE regular session check not run (Part B)
+- Quiet account window check not run (Part B)
+- Broker order-book before snapshot not captured (Part B)
+- Broker order-book after snapshot not captured (Part B)
+- Virtual order record not created (Part B)
+- Part B checks all NOT_RUN

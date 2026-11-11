@@ -58,7 +58,7 @@ flowchart LR
 
 | Step | State | Recorded | Blockers |
 |------|-------|----------|----------|
-| G0 | BLOCKED | 2026-11-10 | - The required git -C vendor/openalgo rev-parse HEAD command could not execute because the host has no active Xcode com...<br/>- The local app's authenticated read-only Analyzer Mode and sandbox settings endpoints redirected to /login, so current...<br/>- The charge-inclusive one-share MIS requirement is UNVERIFIED: the installed sandbox documents margin as price × quant... |
+| G0 | BLOCKED | 2026-11-11 | - NSE regular session check not run (Part B)<br/>- Quiet account window check not run (Part B)<br/>- Broker order-book before snapshot not captured (Part B) |
 | G1 | NOT_RUN | — | — |
 | G2 | NOT_RUN | — | — |
 | G3 | NOT_RUN | — | — |
@@ -72,4 +72,4 @@ flowchart LR
 | R5 | NOT_RUN | — | — |
 | R6 | NOT_RUN | — | — |
 
-**Next:** G0 Scope and safety (BLOCKED) — The required git -C vendor/openalgo rev-parse HEAD command could not execute because the host has no active Xcode com...
+**Next:** G0 Scope and safety (BLOCKED) — NSE regular session check not run (Part B)
