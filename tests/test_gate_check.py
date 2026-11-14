@@ -1,4 +1,4 @@
-"""Tests for gate_check.py - STYX gate evidence validation."""
+"""Tests for gate_check.py - Pulse gate evidence validation."""
 
 import json
 from pathlib import Path

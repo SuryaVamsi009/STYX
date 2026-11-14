@@ -1,5 +1,5 @@
 """
-STYX unit test for gate0_guard_check.py
+Pulse unit test for gate0_guard_check.py
 
 This test verifies the guard script's output parsing and exit code behavior
 without importing any vendor code.
@@ -27,7 +27,7 @@ def get_vendor_openalgo_path():
         return repo_root_path
 
     # Fall back to main GitHub checkout (local worktree case)
-    main_checkout = Path("/Users/suryavamsipichika/GitHub/STYX/vendor/openalgo")
+    main_checkout = Path("/Users/suryavamsipichika/GitHub/Pulse/vendor/openalgo")
     if main_checkout.exists():
         return main_checkout
 

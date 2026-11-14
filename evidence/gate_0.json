@@ -232,7 +232,7 @@
         "FyersLiveExecClientFactory",
         "exec_clients"
       ],
-      "scope": "STYX-owned files excluding vendor/, evidence/, tests/, instructions.md, AGENTS.md and skill files",
+      "scope": "Pulse-owned files excluding vendor/, evidence/, tests/, instructions.md, AGENTS.md and skill files",
       "search_result": "rg exited 1 with no output (no matches)"
     },
     "nse_regular_session": "NOT_RUN",

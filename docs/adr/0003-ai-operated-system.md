@@ -1,6 +1,6 @@
 # AI-operated system
 
-STYX's primary operator is an AI agent. Humans approve, the AI operates. Design rules:
+Pulse's primary operator is an AI agent. Humans approve, the AI operates. Design rules:
 
 1. All state is machine-readable files, with a `styx status --json` summary.
 2. Every action is a command with an exit code and JSON output.
