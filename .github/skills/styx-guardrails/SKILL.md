@@ -1,11 +1,10 @@
 ---
 name: "styx-guardrails"
-description: "Use when changing STYX code that touches execution or data clients, strategies, indicators, the cost model, backtests, or gate evidence."
+description: "Use when changing Pulse code that touches execution or data clients, strategies, indicators, the cost model, backtests, or gate evidence."
 ---
 
-# STYX guardrails
-
-STYX is paper-only research and paper trading for Indian equities. Passing a gate shows the pipeline behaves as tested. It does not show a strategy has an edge. Run this checklist before reporting any change as done, and report real command output.
+# Pulse guardrails
+Pulse is paper-only research and paper trading for Indian equities. Passing a gate shows the pipeline behaves as tested. It does not show a strategy has an edge. Run this checklist before reporting any change as done, and report real command output.
 
 ## 1. Paper-only boundary
 

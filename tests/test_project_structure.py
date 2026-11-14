@@ -77,7 +77,7 @@ def test_pyproject_toml_valid():
     with open("pyproject.toml", "rb") as f:
         config = tomllib.load(f)
 
-    assert config["project"]["name"] == "styx"
+    assert config["project"]["name"] == "pulse"
     assert config["project"]["requires-python"] == ">=3.12"
     assert "pandas" in config["project"]["dependencies"]
     assert "numpy" in config["project"]["dependencies"]

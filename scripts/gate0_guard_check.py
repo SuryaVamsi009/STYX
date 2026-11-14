@@ -69,7 +69,7 @@ else:
     _vendor_path = _script_path.parent.parent / "vendor" / "openalgo"
     if not _vendor_path.exists():
         # Fall back to main GitHub checkout (local worktree case)
-        _vendor_path = Path("/Users/suryavamsipichika/GitHub/STYX/vendor/openalgo")
+        _vendor_path = Path("/Users/suryavamsipichika/GitHub/Pulse/vendor/openalgo")
 
 sys.path.insert(0, str(_vendor_path))
 

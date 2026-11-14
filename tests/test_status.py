@@ -1,4 +1,4 @@
-"""Tests for status.py - STYX status generator."""
+"""Tests for status.py - Pulse status generator."""
 
 import json
 import subprocess

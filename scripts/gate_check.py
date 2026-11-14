@@ -1,4 +1,4 @@
-"""Validate STYX gate evidence files.
+"""Validate Pulse gate evidence files.
 
 Run via: uv run python scripts/gate_check.py --gate <n>
 """
@@ -101,7 +101,7 @@ def validate_gate_0(evidence_path: Path) -> int:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate STYX gate evidence files")
+    parser = argparse.ArgumentParser(description="Validate Pulse gate evidence files")
     parser.add_argument("--gate", type=int, required=True, help="Gate number to validate")
     parser.add_argument(
         "--evidence-file",

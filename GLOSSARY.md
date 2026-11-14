@@ -1,4 +1,4 @@
-# STYX Research and Paper Execution
+# Pulse Research and Paper Execution
 
 Language for the research and paper-trading workflow.
 
@@ -13,7 +13,7 @@ Any active component or route capable of transmitting an order to a real broker.
 _Avoid_: Broker client (when order capability is meant)
 
 **Analyzer Mode**:
-OpenAlgo mode described by STYX as virtual capital on real broker prices. Whether it prevents a real-broker order path is **UNVERIFIED** until established for the installed version.
+OpenAlgo mode described by Pulse as virtual capital on real broker prices. Whether it prevents a real-broker order path is **UNVERIFIED** until established for the installed version.
 _Avoid_: Sandbox (unless isolation is verified)
 
 ## Gate 0

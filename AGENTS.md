@@ -1,6 +1,5 @@
-# AGENTS.md: STYX
-
-Read `instructions.md` first. STYX is paper-only research and paper trading for Indian equities.
+# AGENTS.md: Pulse
+Read `instructions.md` first. Pulse is paper-only research and paper trading for Indian equities.
 
 ## Hard rules
 1. Never place, enable or prepare a live order. Never register a real-broker execution client.

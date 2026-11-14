@@ -1,17 +1,17 @@
-# STYX: Systematic Trader's Yield eXtractor
+# Pulse: Research and Paper-Trading Pipeline
 
-Implementation instructions. Owner: Surya. Written 8 Nov 2026. Read this file first; it is the single entry point for people and agents working on STYX.
+Implementation instructions. Owner: Surya. Written 8 Nov 2026. Read this file first; it is the single entry point for people and agents working on Pulse.
 
-## 1. What STYX is
+## 1. What Pulse is
 
-STYX is a research and paper-trading pipeline for Indian equities. It reuses existing tools instead of writing a trading engine:
+Pulse is a research and paper-trading pipeline for Indian equities. It reuses existing tools instead of writing a trading engine:
 
 - **OpenAlgo** (`marketcalls/openalgo`): India-facing layer with broker plugins, history store (Historify) and Analyzer Mode (virtual capital on real prices).
 - **NautilusTrader** (`nautechsystems/nautilus_trader`) with **nautilus-fyers** (`sunilsala88/nautilus-fyers`, alpha) for backtesting. nautilus-fyers supplies Fyers data only.
 - **Free broker data**: Angel One SmartAPI or Fyers. Recheck current terms before relying on either.
 - **A small research loop** (section 6) that records every research claim before the outcome, grades it mechanically, and scores it against baselines.
 
-STYX is not a live-trading system. Nothing in this file authorises a real order. Passing the pipeline gates shows only that data, accounting and the paper workflow behave as tested. It does not show that any strategy has an edge.
+Pulse is not a live-trading system. Nothing in this file authorises a real order. Passing the pipeline gates shows only that data, accounting and the paper workflow behave as tested. It does not show that any strategy has an edge.
 
 ## 2. Non-negotiable rules
 
@@ -29,7 +29,7 @@ STYX is not a live-trading system. Nothing in this file authorises a real order.
 ## 3. Repository layout
 
 ```
-styx/
+pulse/
 ├── vendor/                      # cloned upstream repos, gitignored
 │   ├── openalgo/
 │   └── nautilus-fyers/
@@ -58,7 +58,7 @@ Two virtualenvs on purpose: OpenAlgo and its library need Python 3.12+, nautilus
 ## 4. Setup
 
 ```bash
-mkdir styx && cd styx && git init
+mkdir pulse && cd pulse && git init
 mkdir -p vendor bridge research/{snapshots,playbook,protocols} strategies config data evidence scripts tests
 printf '.env\n*.env\nvendor/\ndata/\n.venv-*/\n' > .gitignore
 
@@ -101,7 +101,7 @@ Paper routes for Gate 3. Pick one and test only that:
 
 ## 6. Research loop
 
-After the pipeline gates, STYX adds the loop that decides which ideas deserve a backtest. The full audit and design is on the ATLAS page ("ATLAS Research Process: Audit, Design and Plan"). Summary:
+After the pipeline gates, Pulse adds the loop that decides which ideas deserve a backtest. The full audit and design is on the ATLAS page ("ATLAS Research Process: Audit, Design and Plan"). Summary:
 
 ```
 Daily scan -> Snapshot JSON -> Research AI -> Call registry
@@ -137,9 +137,8 @@ Do not invent numeric thresholds. Log every variant tried, report negative resul
 ## 8. AGENTS.md (copy to the repo root)
 
 ```markdown
-# AGENTS.md: STYX
-
-Read `instructions.md` first. STYX is paper-only research and paper trading for Indian equities.
+# AGENTS.md: Pulse
+Read `instructions.md` first. Pulse is paper-only research and paper trading for Indian equities.
 
 ## Hard rules
 1. Never place, enable or prepare a live order. Never register a real-broker execution client.
@@ -178,7 +177,7 @@ State what is unknown and what evidence would settle it. Stop at the affected ga
 | Planning capital and loss limits | Not set anywhere in this project. Needed for sandbox capital and sizing. |
 | Horizon and universe: swing or intraday, which instruments | The scan's picks target 1 to 12 months while the goal is daily income. |
 | Pass criteria and minimum sample | Must be written into the protocol before results are looked at. |
-| Where the research loop lives | Default assumption: in STYX, with ATLAS left frozen. Confirm. |
+| Where the research loop lives | Default assumption: in Pulse, with ATLAS left frozen. Confirm. |
 | LLM provider and model | One provider, chosen by Surya. |
 
 ## 11. Reference docs
@@ -189,7 +188,7 @@ State what is unknown and what evidence would settle it. Stop at the affected ga
 
 ## 12. AI-operated system
 
-STYX's primary operator is an AI agent. Humans approve, the AI operates. Design rules:
+Pulse's primary operator is an AI agent. Humans approve, the AI operates. Design rules:
 
 1. All state is machine-readable files, with a `styx status --json` summary.
 2. Every action is a command with an exit code and JSON output.
